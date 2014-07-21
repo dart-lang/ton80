@@ -498,8 +498,7 @@ class Planner {
     List<Constraint> unsatisfied = removePropagateFrom(out);
     Strength strength = REQUIRED;
     do {
-      for (int i = 0; i < unsatisfied.length; i++) {
-        Constraint u = unsatisfied[i];
+      for (Constraint u in unsatisfied) {
         if (u.strength == strength) incrementalAdd(u);
       }
       strength = strength.nextWeaker();
@@ -549,8 +548,7 @@ class Planner {
    */
   Plan extractPlanFromConstraints(List<Constraint> constraints) {
     List<Constraint> sources = <Constraint>[];
-    for (int i = 0; i < constraints.length; i++) {
-      Constraint c = constraints[i];
+    for (Constraint c in constraints) {
       // if not in plan already and eligible for inclusion.
       if (c.isInput() && c.isSatisfied()) sources.add(c);
     }
@@ -597,13 +595,11 @@ class Planner {
     List<Variable> todo = <Variable>[out];
     while (todo.length > 0) {
       Variable v = todo.removeLast();
-      for (int i = 0; i < v.constraints.length; i++) {
-        Constraint c = v.constraints[i];
+      for (Constraint c in v.constraints) {
         if (!c.isSatisfied()) unsatisfied.add(c);
       }
       Constraint determining = v.determinedBy;
-      for (int i = 0; i < v.constraints.length; i++) {
-        Constraint next = v.constraints[i];
+      for (Constraint next in v.constraints) {
         if (next != determining && next.isSatisfied()) {
           next.recalculate();
           todo.add(next.output());
@@ -615,8 +611,7 @@ class Planner {
 
   void addConstraintsConsumingTo(Variable v, List<Constraint> coll) {
     Constraint determining = v.determinedBy;
-    for (int i = 0; i < v.constraints.length; i++) {
-      Constraint c = v.constraints[i];
+    for (Constraint c in v.constraints) {
       if (c != determining && c.isSatisfied()) coll.add(c);
     }
   }
@@ -638,8 +633,8 @@ class Plan {
   int size() => list.length;
 
   void execute() {
-    for (int i = 0; i < list.length; i++) {
-      list[i].execute();
+    for (Constraint c in list) {
+      c.execute();
     }
   }
 }
