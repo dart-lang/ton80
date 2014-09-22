@@ -43,7 +43,10 @@ class Vector {
 
   double dot(Vector w) {
     var prod = _xyz * w._xyz;
-    return prod.x + prod.y + prod.z;
+    var t1 = prod.shuffle(Float32x4.YZXW);
+    var t2 = prod.shuffle(Float32x4.ZXYW);
+    var t3 = prod + t1 + t2;
+    return t3.x;
   }
 
   Vector operator +(Vector w) {
