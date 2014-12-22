@@ -15,7 +15,7 @@ import "../../common/dart/BenchmarkBase.dart";
 import 'dart:math';
 
 class TemplateBenchmark extends BenchmarkBase {
-  final int NUMBERS = 200;
+  final int NUMBERS = 2000;
   final int MAX_NUMBER = 10000;
   static List<int> toSort;
   
