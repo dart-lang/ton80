@@ -41,7 +41,7 @@ int getNumBasicBlocks() => numBasicBlocks;
 //
 class BasicBlock {
   final int name;
-  List<BasicBlock> inEdges  = [];
+  List<BasicBlock> inEdges = [];
   List<BasicBlock> outEdges = [];
 
   BasicBlock(this.name) {
@@ -76,7 +76,6 @@ class BasicBlockEdge {
     cfg.addEdge(this);
   }
 }
-
 
 //
 // class CFG
@@ -119,7 +118,7 @@ class CFG {
 // it can be an irreducible loop, have control flow, be
 // a candidate for transformations, and what not.
 //
-class SimpleLoop  {
+class SimpleLoop {
   final List<BasicBlock> basicBlocks = [];
   final List<SimpleLoop> children = [];
   final int counter;
@@ -167,7 +166,6 @@ class SimpleLoop  {
   }
 }
 
-
 //
 // LoopStructureGraph
 //
@@ -209,7 +207,6 @@ class LSG {
   int getNumLoops() => loops.length;
 }
 
-
 //======================================================
 // Main Algorithm
 //======================================================
@@ -248,14 +245,13 @@ class UnionFindNode {
 
     UnionFindNode node = this;
     while (node != node.parent) {
-      if (node.parent != node.parent.parent)
-        nodeList.add(node);
+      if (node.parent != node.parent.parent) nodeList.add(node);
 
       node = node.parent;
     }
 
     // Path Compression, all nodes' parents point to the 1st level parent.
-    for (int iter=0; iter < nodeList.length; ++iter) {
+    for (int iter = 0; iter < nodeList.length; ++iter) {
       nodeList[iter].parent = node.parent;
     }
 
@@ -273,19 +269,17 @@ class UnionFindNode {
   SimpleLoop setLoop(SimpleLoop l) => loop = l;
 }
 
-
-
 class HavlakLoopFinder {
   final CFG cfg;
   final LSG lsg;
 
-  static const int BB_TOP          = 0; // uninitialized
-  static const int BB_NONHEADER    = 1; // a regular BB
-  static const int BB_REDUCIBLE    = 2; // reducible loop
-  static const int BB_SELF         = 3; // single BB loop
-  static const int BB_IRREDUCIBLE  = 4; // irreducible loop
-  static const int BB_DEAD         = 5; // a dead BB
-  static const int BB_LAST         = 6; // Sentinel
+  static const int BB_TOP = 0; // uninitialized
+  static const int BB_NONHEADER = 1; // a regular BB
+  static const int BB_REDUCIBLE = 2; // reducible loop
+  static const int BB_SELF = 3; // single BB loop
+  static const int BB_IRREDUCIBLE = 4; // irreducible loop
+  static const int BB_DEAD = 5; // a dead BB
+  static const int BB_LAST = 6; // Sentinel
 
   // Marker for uninitialized nodes.
   static const int UNVISITED = -1;
@@ -315,18 +309,15 @@ class HavlakLoopFinder {
   // DESCRIPTION:
   // Simple depth first traversal along out edges with node numbering.
   //
-  int DFS(BasicBlock currentNode,
-          List<UnionFindNode> nodes,
-          List<int> number,
-          List<int> last, int current) {
+  int DFS(BasicBlock currentNode, List<UnionFindNode> nodes, List<int> number,
+      List<int> last, int current) {
     nodes[current].initNode(currentNode, current);
     number[currentNode.name] = current;
 
     int lastid = current;
     for (int target = 0; target < currentNode.outEdges.length; target++) {
-      if (number[currentNode.outEdges[target].name] == UNVISITED)
-        lastid = DFS(currentNode.outEdges[target], nodes, number,
-                     last, lastid + 1);
+      if (number[currentNode.outEdges[target].name] == UNVISITED) lastid =
+          DFS(currentNode.outEdges[target], nodes, number, last, lastid + 1);
     }
 
     last[number[currentNode.name]] = lastid;
@@ -416,7 +407,7 @@ class HavlakLoopFinder {
     // we ensure that inner loop headers will be processed before the
     // headers for surrounding loops.
     //
-    for (int w = size-1; w >=0; --w) {
+    for (int w = size - 1; w >= 0; --w) {
       // this is 'P' in Havlak's paper
       List<UnionFindNode> nodePool = [];
 
@@ -467,7 +458,7 @@ class HavlakLoopFinder {
           return 0;
         }
 
-        for (int iter=0; iter < nonBackPreds[x.dfsNumber].length; ++iter) {
+        for (int iter = 0; iter < nonBackPreds[x.dfsNumber].length; ++iter) {
           UnionFindNode y = nodes[nonBackPreds[x.dfsNumber][iter]];
           UnionFindNode ydash = y.findSet();
 
@@ -534,7 +525,6 @@ class HavlakLoopFinder {
   } // findLoops
 } // HavlakLoopFinder
 
-
 //======================================================
 // Testing Code
 //======================================================
@@ -548,24 +538,23 @@ int buildDiamond(CFG cfg, int start) {
   return bb0 + 3;
 }
 
-
 void buildConnect(CFG cfg, int start, int end) {
   new BasicBlockEdge(cfg, start, end);
 }
 
 int buildStraight(CFG cfg, int start, int n) {
-  for (int i=0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     buildConnect(cfg, start + i, start + i + 1);
   }
   return start + n;
 }
 
 int buildBaseLoop(CFG cfg, int from) {
-  int header   = buildStraight(cfg, from, 1);
+  int header = buildStraight(cfg, from, 1);
   int diamond1 = buildDiamond(cfg, header);
-  int d11      = buildStraight(cfg, diamond1, 1);
+  int d11 = buildStraight(cfg, diamond1, 1);
   int diamond2 = buildDiamond(cfg, d11);
-  int footer   = buildStraight(cfg, diamond2, 1);
+  int footer = buildStraight(cfg, diamond2, 1);
   buildConnect(cfg, diamond2, d11);
   buildConnect(cfg, diamond1, header);
 
@@ -574,27 +563,26 @@ int buildBaseLoop(CFG cfg, int from) {
   return footer;
 }
 
-
 class Havlak extends BenchmarkBase {
   final CFG cfg = new CFG();
 
   Havlak() : super("Havlak") {
     // Construct simple CFG.
-    cfg.createNode(0);  // top
+    cfg.createNode(0); // top
     buildBaseLoop(cfg, 0);
-    cfg.createNode(1);  //s bottom
+    cfg.createNode(1); //s bottom
     buildConnect(cfg, 0, 2);
 
     // Construct complex CFG.
     var n = 2;
-    for (int parlooptrees=0; parlooptrees < 10; parlooptrees++) {
+    for (int parlooptrees = 0; parlooptrees < 10; parlooptrees++) {
       cfg.createNode(n + 1);
       buildConnect(cfg, n, n + 1);
       n = n + 1;
-      for (int i=0; i < 2; ++i) {
+      for (int i = 0; i < 2; ++i) {
         var top = n;
         n = buildStraight(cfg, n, 1);
-        for (int j=0; j < 25; j++) {
+        for (int j = 0; j < 25; j++) {
           n = buildBaseLoop(cfg, n);
         }
 
@@ -621,7 +609,7 @@ class Havlak extends BenchmarkBase {
       finder.findLoops();
       int checksum = lsg.checksum();
       if (checksum != 435630002) {
-       throw 'Wrong checksum - expected <435630002>, but was <$checksum>';
+        throw 'Wrong checksum - expected <435630002>, but was <$checksum>';
       }
     }
   }

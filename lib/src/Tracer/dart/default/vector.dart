@@ -24,9 +24,8 @@ class Vector {
   }
 
   Vector cross(Vector w) {
-    return new Vector(-z * w.y + y * w.z,
-                      z * w.x - x * w.z,
-                      -y * w.x + x * w.y);
+    return new Vector(
+        -z * w.y + y * w.z, z * w.x - x * w.z, -y * w.x + x * w.y);
   }
 
   double dot(Vector w) {

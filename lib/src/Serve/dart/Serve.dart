@@ -30,30 +30,36 @@ import 'dart:convert';
 import 'dart:async';
 
 Future<String> runProcess(String process, List<String> args) {
-  return Process.run(process, args)
-    .then((output) {
-      if (output.exitCode != 0) {
-        throw 'Failed to run process $process.\n'
-              '${output.stdout}\n'
-              '${output.stderr}';
-      }
-      return output.stdout;
-    });
+  return Process.run(process, args).then((output) {
+    if (output.exitCode != 0) {
+      throw 'Failed to run process $process.\n'
+          '${output.stdout}\n'
+          '${output.stderr}';
+    }
+    return output.stdout;
+  });
 }
 
 Future<String> runWrk(String wrk, int port, String path,
-                      {int duration: 5, int concurrency: 128, int threads: 2}) {
-  return runProcess(
-      wrk,
-      ['-d', duration.toString(),
-       '-c', concurrency.toString(),
-       '-t', threads.toString(),
-       '-H', 'Host: localhost',
-       '-H', 'Connection: keep-alive',
-       '-H', 'Accept: */*',
-       '-H', 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
-             ' (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36',
-       'http://localhost:$port$path']);
+    {int duration: 5, int concurrency: 128, int threads: 2}) {
+  return runProcess(wrk, [
+    '-d',
+    duration.toString(),
+    '-c',
+    concurrency.toString(),
+    '-t',
+    threads.toString(),
+    '-H',
+    'Host: localhost',
+    '-H',
+    'Connection: keep-alive',
+    '-H',
+    'Accept: */*',
+    '-H',
+    'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+        ' (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36',
+    'http://localhost:$port$path'
+  ]);
 }
 
 void printResults(String output) {
@@ -83,9 +89,8 @@ void printResults(String output) {
     const LAT_STR = '    Latency';
     if (line.startsWith(LAT_STR)) {
       var latency = line.substring(LAT_STR.length).trim();
-      var latencies = latency.split(' ')
-          .where((s) => !s.trim().isEmpty)
-          .toList();
+      var latencies =
+          latency.split(' ').where((s) => !s.trim().isEmpty).toList();
       print(latencies[0].substring(0, latencies[0].length - 2));
       print(latencies[2].substring(0, latencies[2].length - 2));
     }
@@ -98,22 +103,21 @@ void main(args) {
 
   String wrk = args[0];
   String path = args[1];
-  Process.start(Platform.executable,
-                [Platform.script.resolve('server.dart').toFilePath()])
-    .then((process) {
-      process.stdout
-          .transform(UTF8.decoder)
-          .transform(const LineSplitter())
-          .first.then((line) {
-            // First line is the port.
-            int port = int.parse(line);
-            runWrk(wrk, port, path, duration: WARMUP_TIME).then((_) {
-              runWrk(wrk, port, path, duration: BENCHMARK_TIME)
-                .then((output) {
-                  printResults(output);
-                  process.kill();
-                });
-            });
-          });
+  Process
+      .start(Platform.executable, [
+    Platform.script.resolve('server.dart').toFilePath()
+  ])
+      .then((process) {
+    process.stdout.transform(UTF8.decoder).transform(const LineSplitter()).first
+        .then((line) {
+      // First line is the port.
+      int port = int.parse(line);
+      runWrk(wrk, port, path, duration: WARMUP_TIME).then((_) {
+        runWrk(wrk, port, path, duration: BENCHMARK_TIME).then((output) {
+          printResults(output);
+          process.kill();
+        });
+      });
     });
+  });
 }

@@ -24,7 +24,7 @@ class Color {
     return new Color(red + c2.red, green + c2.green, blue + c2.blue);
   }
 
-  Color addScalar(double s){
+  Color addScalar(double s) {
     var result = new Color(red + s, green + s, blue + s);
     result.limit();
     return result;

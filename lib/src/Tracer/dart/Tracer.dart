@@ -10,14 +10,13 @@ import '../../common/dart/BenchmarkBase.dart';
 import 'default/renderscene.dart' as default_raytrace;
 import 'simd/renderscene.dart' as simd_raytrace;
 
-const bool useSIMD = const bool.fromEnvironment(
-    'dart.isVM',
+const bool useSIMD = const bool.fromEnvironment('dart.isVM',
     defaultValue: !identical(1, 1.0));
 
 class TracerBenchmark extends BenchmarkBase {
   const TracerBenchmark() : super("Tracer");
 
-  void warmup() {    
+  void warmup() {
     if (useSIMD) {
       simd_raytrace.renderScene(null);
     } else {

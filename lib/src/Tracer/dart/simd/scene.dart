@@ -16,7 +16,6 @@ class Ray {
   }
 }
 
-
 class Camera {
   final position;
   final lookAt;
@@ -41,7 +40,6 @@ class Camera {
   }
 }
 
-
 class Background {
   final Color color;
   final double ambience;
@@ -49,16 +47,14 @@ class Background {
   const Background(this.color, this.ambience);
 }
 
-
 class Scene {
   var camera;
   var shapes;
   var lights;
   var background;
   Scene() {
-    camera = new Camera(new Vector(0.0, 0.0, -0.5),
-                        new Vector(0.0, 0.0, 1.0),
-                        new Vector(0.0, 1.0, 0.0));
+    camera = new Camera(new Vector(0.0, 0.0, -0.5), new Vector(0.0, 0.0, 1.0),
+        new Vector(0.0, 1.0, 0.0));
     shapes = new List();
     lights = new List();
     background = const Background(const Color(0.0, 0.0, 0.5), 0.2);

@@ -40,21 +40,9 @@ final List<Map> resources = [
     "name": "pony",
     "content": "\u0011qÌì7zçÖ¡da¥@qc+RÞ9ªê»õ÷¬tÖ×è\"ÿ\u0004µx±~\u0003Ñë"
   },
-  {
-    "id": 2,
-    "name": "mountain",
-    "content": null
-  },
-  {
-    "id": 3,
-    "name": "locomotive",
-    "content": ""
-  },
-  {
-    "id": 4,
-    "name": "grass",
-    "content": "{ \"version\": 2.1 }"
-  }
+  {"id": 2, "name": "mountain", "content": null},
+  {"id": 3, "name": "locomotive", "content": ""},
+  {"id": 4, "name": "grass", "content": "{ \"version\": 2.1 }"}
 ];
 
 class Serve {
@@ -65,9 +53,9 @@ class Serve {
   }
 
   static const _HANDLERS = const {
-    '/hello' : _hello,
-    '/file'  : _file,
-    '/json'  : _json,
+    '/hello': _hello,
+    '/file': _file,
+    '/json': _json,
   };
 
   final HttpServer _server;
@@ -86,36 +74,34 @@ class Serve {
 
   static void _hello(HttpRequest request) {
     request.response
-        ..headers.contentType = new ContentType('text', 'plain')
-        ..write('world')
-        ..close();
+      ..headers.contentType = new ContentType('text', 'plain')
+      ..write('world')
+      ..close();
   }
 
   static void _file(HttpRequest request) {
     var file = new File(Platform.script.resolve('file.dat').toFilePath());
-    request.response.headers.contentType =
-        new ContentType('application', 'octet-stream');
+    request.response.headers.contentType = new ContentType(
+        'application', 'octet-stream');
     file.openRead().pipe(request.response);
   }
 
   static void _json(HttpRequest request) {
     request.response
-        ..headers.contentType =
-            new ContentType('text', 'plain', charset: 'utf-8')
-        ..write(JSON.encode(resources))
-        ..close();
+      ..headers.contentType = new ContentType('text', 'plain', charset: 'utf-8')
+      ..write(JSON.encode(resources))
+      ..close();
   }
 
   static void _error(HttpRequest request,
-                     [int statusCode = HttpStatus.NOT_FOUND]) {
+      [int statusCode = HttpStatus.NOT_FOUND]) {
     request.response
-        ..statusCode = statusCode
-        ..close();
+      ..statusCode = statusCode
+      ..close();
   }
 
   int get port => _server.port;
 }
-
 
 void main() {
   Serve.start().then((Serve serve) {

@@ -17,7 +17,6 @@ class BaseShape {
   }
 }
 
-
 class Plane extends BaseShape {
   final d;
 
@@ -38,14 +37,14 @@ class Plane extends BaseShape {
     info.normal = position;
     info.distance = t;
 
-    if(material.hasTexture){
+    if (material.hasTexture) {
       var vU = new Vector(position.y, position.z, -position.x);
       var vV = vU.cross(position);
       var u = info.position.dot(vU);
       var v = info.position.dot(vV);
-      info.color = material.getColor(u,v);
+      info.color = material.getColor(u, v);
     } else {
-      info.color = material.getColor(0,0);
+      info.color = material.getColor(0, 0);
     }
 
     return info;
@@ -56,12 +55,11 @@ class Plane extends BaseShape {
   }
 }
 
-
 class Sphere extends BaseShape {
   final double radius;
   const Sphere(pos, this.radius, material) : super(pos, material);
 
-  IntersectionInfo intersect(Ray ray){
+  IntersectionInfo intersect(Ray ray) {
     var info = new IntersectionInfo();
     info.shape = this;
 
@@ -71,14 +69,15 @@ class Sphere extends BaseShape {
     var C = dst.dot(dst) - (radius * radius);
     var D = (B * B) - C;
 
-    if (D > 0) { // intersection!
+    if (D > 0) {
+      // intersection!
       info.isHit = true;
       info.distance = (-B) - sqrt(D);
-      info.position = ray.position +
-          ray.direction.multiplyScalar(info.distance);
+      info.position =
+          ray.position + ray.direction.multiplyScalar(info.distance);
       info.normal = (info.position - position).normalize();
 
-      info.color = material.getColor(0,0);
+      info.color = material.getColor(0, 0);
     } else {
       info.isHit = false;
     }
@@ -89,4 +88,3 @@ class Sphere extends BaseShape {
     return 'Sphere [position=$position, radius=$radius]';
   }
 }
-

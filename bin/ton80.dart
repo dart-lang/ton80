@@ -14,30 +14,11 @@ final Runner runnerForJS = new JSRunner();
 final Runner runnerForWrk = new DartWrkRunner();
 
 final CATEGORIES = {
-  'BASE' : {
-    'RUNNERS': [
-        runnerForDart,
-        runnerForDart2JS,
-        runnerForJS,
-    ],
-    'BENCHMARKS': [
-        'DeltaBlue',
-        'Richards',
-        'FluidMotion',
-        'Tracer',
-        'Havlak',
-    ],
+  'BASE': {
+    'RUNNERS': [runnerForDart, runnerForDart2JS, runnerForJS,],
+    'BENCHMARKS': ['DeltaBlue', 'Richards', 'FluidMotion', 'Tracer', 'Havlak',],
   },
-  'WRK' : {
-    'RUNNERS' : [
-        runnerForWrk
-    ],
-    'BENCHMARKS': [
-        'Hello',
-        'File',
-        'JSON',
-    ],
-  }
+  'WRK': {'RUNNERS': [runnerForWrk], 'BENCHMARKS': ['Hello', 'File', 'JSON',],}
 };
 
 String pathToJS;
@@ -46,14 +27,13 @@ String pathToWrk;
 
 void main(arguments) {
   args.ArgParser parser = new args.ArgParser();
-  parser.addOption('js', abbr: 'j',
-      help: 'Path to JavaScript runner',
-      defaultsTo: 'd8');
-  parser.addOption('dart', abbr: 'd',
+  parser.addOption('js',
+      abbr: 'j', help: 'Path to JavaScript runner', defaultsTo: 'd8');
+  parser.addOption('dart',
+      abbr: 'd',
       help: 'Path to Dart runner',
       defaultsTo: io.Platform.executable);
-  parser.addOption('wrk', abbr: 'w',
-      help: 'Path to wrk benchmarking tool');
+  parser.addOption('wrk', abbr: 'w', help: 'Path to wrk benchmarking tool');
 
   args.ArgResults results = parser.parse(arguments);
   List<String> rest = results.rest;
@@ -96,18 +76,16 @@ abstract class Runner {
 
 class DartRunner extends Runner {
   void run(String benchmark) {
-    List<double> dart = extractScores(() => io.Process.runSync(pathToDart, [
-        source(benchmark, 'dart', '$benchmark.dart'),
-    ]));
+    List<double> dart = extractScores(() => io.Process.runSync(
+        pathToDart, [source(benchmark, 'dart', '$benchmark.dart'),]));
     print('  - Dart    : ${format(dart, "runs/sec")}');
   }
 }
 
 class Dart2JSRunner extends Runner {
   void run(String benchmark) {
-    var scores = extractScores(() => io.Process.runSync(pathToJS, [
-        source(benchmark, 'dart', '$benchmark.dart.js'),
-    ]));
+    var scores = extractScores(() => io.Process.runSync(
+        pathToJS, [source(benchmark, 'dart', '$benchmark.dart.js'),]));
     print('  - Dart2JS : ${format(scores, "runs/sec")}');
   }
 }
@@ -115,8 +93,10 @@ class Dart2JSRunner extends Runner {
 class JSRunner extends Runner {
   void run(String benchmark) {
     var scores = extractScores(() => io.Process.runSync(pathToJS, [
-        '-f', source('common', 'javascript', 'bench.js'),
-        '-f', source(benchmark, 'javascript', '$benchmark.js'),
+      '-f',
+      source('common', 'javascript', 'bench.js'),
+      '-f',
+      source(benchmark, 'javascript', '$benchmark.js'),
     ]));
     print('  - JS      : ${format(scores, "runs/sec")}');
   }
@@ -126,9 +106,9 @@ class DartWrkRunner extends Runner {
   bool get isEnabled => pathToWrk != null;
   void run(String benchmark) {
     var scores = extractWrkScores(() => io.Process.runSync(pathToDart, [
-        source('Serve', 'dart', 'Serve.dart'),
-        pathToWrk,
-        '/${benchmark.toLowerCase()}'
+      source('Serve', 'dart', 'Serve.dart'),
+      pathToWrk,
+      '/${benchmark.toLowerCase()}'
     ]));
     print('  - Dart    : ${format(scores[0], "requests/sec")}');
     print('  - Dart    : ${format(scores[1], "ms mean latency")}');
@@ -180,15 +160,104 @@ double computeStandardDeviation(List<double> scores, double mean) {
 
 double computeTDistribution(int n) {
   const List<double> TABLE = const [
-      double.NAN, double.NAN, 12.71,
-      4.30, 3.18, 2.78, 2.57, 2.45, 2.36, 2.31, 2.26, 2.23, 2.20, 2.18, 2.16,
-      2.14, 2.13, 2.12, 2.11, 2.10, 2.09, 2.09, 2.08, 2.07, 2.07, 2.06, 2.06,
-      2.06, 2.05, 2.05, 2.05, 2.04, 2.04, 2.04, 2.03, 2.03, 2.03, 2.03, 2.03,
-      2.02, 2.02, 2.02, 2.02, 2.02, 2.02, 2.02, 2.01, 2.01, 2.01, 2.01, 2.01,
-      2.01, 2.01, 2.01, 2.01, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00,
-      2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 1.99, 1.99, 1.99, 1.99, 1.99,
-      1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99,
-      1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99, 1.99 ];
+    double.NAN,
+    double.NAN,
+    12.71,
+    4.30,
+    3.18,
+    2.78,
+    2.57,
+    2.45,
+    2.36,
+    2.31,
+    2.26,
+    2.23,
+    2.20,
+    2.18,
+    2.16,
+    2.14,
+    2.13,
+    2.12,
+    2.11,
+    2.10,
+    2.09,
+    2.09,
+    2.08,
+    2.07,
+    2.07,
+    2.06,
+    2.06,
+    2.06,
+    2.05,
+    2.05,
+    2.05,
+    2.04,
+    2.04,
+    2.04,
+    2.03,
+    2.03,
+    2.03,
+    2.03,
+    2.03,
+    2.02,
+    2.02,
+    2.02,
+    2.02,
+    2.02,
+    2.02,
+    2.02,
+    2.01,
+    2.01,
+    2.01,
+    2.01,
+    2.01,
+    2.01,
+    2.01,
+    2.01,
+    2.01,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    2.00,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99,
+    1.99
+  ];
   if (n >= 474) return 1.96;
   else if (n >= 160) return 1.97;
   else if (n >= TABLE.length) return 1.98;
@@ -197,7 +266,7 @@ double computeTDistribution(int n) {
 
 final RegExp EXTRACT = new RegExp(r"((\d)+(\.(\d)+)?) us");
 List<double> extractScores(io.ProcessResult generator(),
-                           [int iterations = 10]) {
+    [int iterations = 10]) {
   List<double> scores = [];
   for (int i = 0; i < iterations; i++) {
     io.ProcessResult result = generator();
@@ -209,7 +278,7 @@ List<double> extractScores(io.ProcessResult generator(),
 }
 
 List<List<double>> extractWrkScores(io.ProcessResult generator(),
-                                    [int iterations = 3]) {
+    [int iterations = 3]) {
   List<double> requestsPerSecond = [];
   List<double> latency = [];
   List<double> latencyMax = [];
