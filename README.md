@@ -10,7 +10,7 @@ please use the existing harness and help us make sure we can continue to
 easily run and profile from the command line.
 
 You can run Ton80 using `bin/ton80.dart`. It has the following usage:<br>
-```dart ton80.dart [OPTION]... [BENCHMARK]```
+```dart ton80.dart [--js pathToD8] [OPTION]... [BENCHMARK]```
 
 ## Contributing
 
