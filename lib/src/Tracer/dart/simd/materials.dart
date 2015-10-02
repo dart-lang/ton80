@@ -7,40 +7,31 @@
 part of ray_trace_simd;
 
 abstract class Materials {
-  final double gloss;             // [0...infinity] 0 = matt
-  final double transparency;      // 0=opaque
-  final double reflection;        // [0...infinity] 0 = no reflection
+  final double gloss; // [0...infinity] 0 = matt
+  final double transparency; // 0=opaque
+  final double reflection; // [0...infinity] 0 = no reflection
   final double refraction;
   final bool hasTexture;
 
-  const Materials(this.reflection,
-                  this.transparency,
-                  this.gloss,
-                  this.refraction,
-                  this.hasTexture);
+  const Materials(this.reflection, this.transparency, this.gloss,
+      this.refraction, this.hasTexture);
 
   Color getColor(num u, num v);
 
   wrapUp(t) {
     t = t % 2.0;
-    if(t < -1) t += 2.0;
-    if(t >= 1) t -= 2.0;
+    if (t < -1) t += 2.0;
+    if (t >= 1) t -= 2.0;
     return t;
   }
 }
-
 
 class Chessboard extends Materials {
   final Color colorEven, colorOdd;
   final double density;
 
-  const Chessboard(this.colorEven,
-                   this.colorOdd,
-                   reflection,
-                   transparency,
-                   gloss,
-                   this.density)
-      : super(reflection, transparency, gloss, 0.5, true);
+  const Chessboard(this.colorEven, this.colorOdd, reflection, transparency,
+      gloss, this.density) : super(reflection, transparency, gloss, 0.5, true);
 
   Color getColor(num u, num v) {
     var t = wrapUp(u * density) * wrapUp(v * density);
@@ -52,7 +43,6 @@ class Chessboard extends Materials {
     }
   }
 }
-
 
 class Solid extends Materials {
   final Color color;
