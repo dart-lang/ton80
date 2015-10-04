@@ -26,6 +26,7 @@ final CATEGORIES = {
         'FluidMotion',
         'Tracer',
         'Havlak',
+        'MergeSort',
     ],
   },
   'WRK' : {
